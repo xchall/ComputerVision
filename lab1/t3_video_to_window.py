@@ -20,14 +20,14 @@ while True:
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    # cv2.imshow('video_hsv', hsv)
-    cv2.imshow('video_gray', gray)
+    cv2.imshow('video_hsv', hsv)
+    # cv2.imshow('video_gray', gray)
     # cv2.imshow('video', frame)
 
-    resized_down = cv2.resize(frame, (width // 10, height // 10))
-    cv2.imshow('video_sizedown_x10', resized_down)
+    # resized_down = cv2.resize(frame, (width // 10, height // 10))
+    # cv2.imshow('video_sizedown_x10', resized_down)
 
-    if cv2.waitKey(20) & 0xFF == 27: # 27 - проверяем нажата ли ESC
+    if cv2.waitKey(100) & 0xFF == 27: # 27 - проверяем нажата ли ESC
         break
 
 cap.release()
