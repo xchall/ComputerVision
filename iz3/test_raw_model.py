@@ -28,42 +28,52 @@ def read_labels(txt_path: Path):
     return gt
 
 def main():
-    img_dir = ROOT / IMAGES_SUBDIR
-    labels_path = ROOT / LABELS_FILE
 
-    gt = read_labels(labels_path)
+
 
     # Модель распознавания (без детекции)
     model = TextRecognition(
         model_name=MODEL_NAME,
         #use_gpu=True в новой версии paddleOCR, если доступно gpu, выбирает автоматически
     )
+    subsets = {
+        "number": "number.txt",
+        "prod": "prod.txt",
+        "year": "year.txt",
+    }
 
     total = 0
     correct = 0
     missing = 0
-    #stem - имя файла без расширения
-    for stem, gt_text in gt.items():
-        total += 1
 
-        # ищем файл по имени с расширением
-        candidate = list(img_dir.glob(stem + ".jpg"))
-        if not candidate:
-            missing += 1
-            print(f"[MISS] {stem}: no image")
-            continue
+    for folder, txt in subsets.items():
 
-        img_path = str(candidate[0])
-        out = model.predict(input=img_path, batch_size=1)
-        pred_text = out[0]["rec_text"]
+        img_dir = ROOT / folder
+        labels_path = ROOT / txt
+        gt = read_labels(labels_path)
+
+        #stem - имя файла без расширения
+        for stem, gt_text in gt.items():
+            total += 1
+
+            # ищем файл по имени с расширением
+            candidate = list(img_dir.glob(stem + ".jpg"))
+            if not candidate:
+                missing += 1
+                print(f"[MISS] {stem}: no image")
+                continue
+
+            img_path = str(candidate[0])
+            out = model.predict(input=img_path, batch_size=1)
+            pred_text = out[0]["rec_text"]
 
 
-        ok = (pred_text == gt_text)
-        if ok:
-            correct += 1
+            ok = (pred_text == gt_text)
+            if ok:
+                correct += 1
 
-        status = "OK" if ok else "ERR"
-        print(f"[{status}] {stem}: GT='{gt_text}' | PRED='{pred_text}'")
+            status = "OK" if ok else "ERR"
+            print(f"[{status}] {stem}: GT='{gt_text}' | PRED='{pred_text}'")
 
     acc = correct / total
     err_pct = 100.0 * (1.0 - acc)
