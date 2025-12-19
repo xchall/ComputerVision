@@ -3,7 +3,7 @@ import numpy as np
 
 def red_object_tracking():
 
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
 
     cap.set(3, 1280)
     cap.set(4, 720)
